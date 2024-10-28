@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
 import { ProfileData } from '../models/profile-data.model';
+import { ProfileService } from '../profile-service.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,12 +9,18 @@ import { ProfileData } from '../models/profile-data.model';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
-export class ProfileComponent implements OnChanges {
-  @Input() info!: ProfileData;
+export class ProfileComponent implements OnInit {
+  info!: ProfileData;
   disabled = true;
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['info'] && changes['info'] != undefined) {
-      this.disabled = false;
-    }
+
+  constructor(private profileService: ProfileService){};
+
+  ngOnInit(): void {
+    this.profileService.currentProfileData.subscribe((data) => {
+      if (data) {
+        this.info = data
+        this.disabled = false
+      }  
+    })
   }
 }

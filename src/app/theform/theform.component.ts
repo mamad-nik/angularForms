@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ProfileData } from '../models/profile-data.model';
+import { ProfileService } from '../profile-service.service';
 
 @Component({
   selector: 'app-theform',
@@ -11,10 +12,8 @@ import { ProfileData } from '../models/profile-data.model';
 })
 export class TheformComponent implements OnInit {
   profileForm!: FormGroup;
-
-  @Output() dataSubmitted = new EventEmitter<ProfileData>();
-
-  constructor(private formbuilder: FormBuilder){};
+  submited = false;
+  constructor(private formbuilder: FormBuilder, private profileService: ProfileService){};
 
   ngOnInit() {
     this.profileForm = this.formbuilder.group({
@@ -25,10 +24,12 @@ export class TheformComponent implements OnInit {
   }
 
   onSubmit() {
-    this.dataSubmitted.emit({
+    const profileData: ProfileData = {
       firstname: this.profileForm.value.firstname,
       lastname: this.profileForm.value.lastname,
       email: this.profileForm.value.email
-    })
+    }
+    this.profileService.updateProfileData(profileData);
+    this.submited = true;
   }
 }
